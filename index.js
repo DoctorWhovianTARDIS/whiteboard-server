@@ -7,6 +7,8 @@ const server = http.createServer(app);
 const io = new Server(server, {
   cors: { origin: "*" }
 });
+  cors: { origin: "*" }
+});
 
 // Store strokes and rooms in memory
 let rooms = {};
