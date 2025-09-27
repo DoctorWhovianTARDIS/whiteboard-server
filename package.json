@@ -1,5 +1,6 @@
 
 {
+
 "name": "whiteboard-server",
 "version": "1.0.0",
 "description": "Simple collaborative whiteboard server",
