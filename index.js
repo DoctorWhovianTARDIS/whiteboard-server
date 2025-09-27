@@ -28,6 +28,26 @@ io.on("connection", (socket) => {
     io.to(room).emit("stroke", stroke);
   });
 
+  // handle removing strokes (eraser or undo)
+  socket.on("remove", ({ room, ids }) => {
+    if (!rooms[room]) return;
+    rooms[room] = rooms[room].filter((s) => !ids.includes(s.id));
+    io.to(room).emit("remove", ids);
+    console.log(`Removed ${ids.length} strokes in room ${room}`);
+  });
+
+  // handle syncing (used for undo/redo full state)
+  socket.on("sync", (strokes) => {
+    // replace whole room state
+    for (let [room] of socket.rooms) {
+      if (room !== socket.id) {
+        rooms[room] = strokes;
+        io.to(room).emit("sync", strokes);
+        console.log(`Room ${room} synced (${strokes.length} strokes)`);
+      }
+    }
+  });
+
   // handle clearing a room
   socket.on("clear", (room) => {
     rooms[room] = [];
