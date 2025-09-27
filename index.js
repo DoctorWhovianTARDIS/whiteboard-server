@@ -4,17 +4,20 @@ const { Server } = require("socket.io");
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server, { cors: { origin: "*" } });
+const io = new Server(server, {
+  cors: { origin: "*" }
+});
 
+// Store strokes and rooms in memory
 let rooms = {};
 
 io.on("connection", (socket) => {
-  console.log("connected:", socket.id);
+  console.log("New client:", socket.id);
 
   socket.on("join", (room) => {
     socket.join(room);
     if (!rooms[room]) rooms[room] = [];
-    socket.emit("sync", rooms[room]);
+    socket.emit("sync", rooms[room]); // send existing strokes
   });
 
   socket.on("stroke", ({ room, stroke }) => {
@@ -29,5 +32,5 @@ io.on("connection", (socket) => {
   });
 });
 
-const PORT = process.env.PORT || 10000;
-server.listen(PORT, () => console.log(`Server running on ${PORT}`));
+const PORT = process.env.PORT || 5000;
+server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
